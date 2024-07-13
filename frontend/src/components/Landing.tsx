@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom"
-import { Room } from "./Room";
+import { Room } from "./NewRoom";
 
 export const Landing = () => {
-  const [name, setName] = useState("");
   const [joined, setJoined] = useState(false);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [localVideoTrack, setlocalVideoTrack] = useState<MediaStreamTrack | null>(null);
   const [localAudioTrack, setLocalAudioTrack] = useState<MediaStreamTrack | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -14,6 +13,7 @@ export const Landing = () => {
       video: true,
       audio: true
     })
+    setLocalStream(stream);
     const audioTrack = stream.getAudioTracks()[0];
     const videoTrack = stream.getVideoTracks()[0];
     setLocalAudioTrack(audioTrack);
@@ -24,31 +24,53 @@ export const Landing = () => {
     videoRef.current.srcObject = new MediaStream([videoTrack]);
     videoRef.current.play();
   }
+
   useEffect(() => {
     if (videoRef && videoRef.current) {
       getCam();
     }
 
   }, [videoRef]);
+
   if (!joined) {
 
     return (
-      <div>
-        <video autoPlay ref={videoRef}></video>
-        <input type="text" onChange={(e) => { setName(e.target.value) }} />
-        <button onClick={(e) => { setJoined(true) }}>
-          Join
-        </button>
-        {/*       <button onClick={() => { */}
-        {/* navigator.bind */}
-        {/*       }}> */}
-        {/*         Join */}
-        {/*       </button> */}
+      <div className="flex flex-col items-center justify-center h-screen w-screen p-4">
+        <header className="text-center py-8">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-800 tracking-tight">
+            <span className="inline-block transform hover:scale-110 transition-transform duration-200 ease-in-out">
+              📸
+            </span>{' '}
+            Omegle
+            <sup className="text-2xl md:text-3xl text-blue-500 font-semibold ml-1">
+              clone
+            </sup>
+          </h1>
+          <p className="mt-4 text-xl text-gray-600">
+            Connect with strangers around the world
+          </p>
+        </header>
+        <div className="w-full max-w-[50%] aspect-video">
+          <video
+            className="w-full h-full object-cover rounded-lg shadow-lg"
+            autoPlay
+            ref={videoRef}
+          ></video>
 
-
-        Landing
+        </div>
+        <p className="mt-4 text-md text-gray-600">
+          Please allow camera and microphone permission
+        </p>
+        <div className="mt-4">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            onClick={() => { if (localStream) setJoined(true) }}
+          >
+            Join
+          </button>
+        </div>
       </div>
     )
   }
-  return <Room name={name} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
+  return <Room localStream={localStream} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
 }

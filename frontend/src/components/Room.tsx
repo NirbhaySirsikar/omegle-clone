@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom"
 import { Socket, io } from "socket.io-client";
 
 const URL = 'http://localhost:3000';
 
 export const Room = ({
-  name, localAudioTrack, localVideoTrack
+  localAudioTrack, localVideoTrack
 }: {
-  name: string,
   localAudioTrack: MediaStreamTrack | null,
   localVideoTrack: MediaStreamTrack | null
 }) => {
@@ -17,7 +15,7 @@ export const Room = ({
   const [receiving, setReceivingPc] = useState<null | RTCPeerConnection>(null);
   const [remoteVideoTrack, setRemoteVideoTrack] = useState<MediaStreamTrack | null>(null);
   const [remoteAudioTrack, setRemoteAudioTrack] = useState<MediaStreamTrack | null>(null);
-  const [remoteMediaSteam, setRemoteMediaStream] = useState<MediaStream | null>(null);
+  const [remoteMediaStream, setRemoteMediaStream] = useState<MediaStream | null>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>();
   const localVideoRef = useRef<HTMLVideoElement>();
 
@@ -47,7 +45,6 @@ export const Room = ({
       }
       pc.onnegotiationneeded = async () => {
         const sdp = await pc.createOffer();
-        // @ts-ignore
         pc.setLocalDescription(sdp)
         socket.emit("offer", {
           sdp,
@@ -61,7 +58,6 @@ export const Room = ({
       const pc = new RTCPeerConnection();
       pc.setRemoteDescription(remoteSdp);
       const sdp = await pc.createAnswer();
-      // @ts-ignore
       pc.setLocalDescription(sdp);
       const stream = new MediaStream();
       if (remoteVideoRef.current) {
@@ -80,14 +76,14 @@ export const Room = ({
       }
 
       pc.ontrack = (({ track, type }) => {
-        if (type == "audio") {
-          // @ts-ignore
-          remoteVideoRef?.current?.srcObject?.addTrack(track);
-        } else {
-          // @ts-ignore
-          remoteVideoRef?.current?.srcObject?.addTrack(track);
+        if (remoteVideoRef.current) {
+          if (type == "audio") {
+            remoteVideoRef.current.srcObject = new MediaStream([track]);
+          } else {
+            remoteVideoRef.current.srcObject = new MediaStream([track]);
+          }
+          remoteVideoRef.current?.play();
         }
-        remoteVideoRef.current?.play();
       })
       socket.emit("answer", {
         roomId,
@@ -122,7 +118,7 @@ export const Room = ({
 
     });
     setSocket(socket);
-  }, [name]);
+  }, [localAudioTrack, localVideoTrack]);
 
   useEffect(() => {
     if (localVideoRef.current) {
@@ -136,10 +132,10 @@ export const Room = ({
 
   return (
     <div>
-      Room {name}
-      <video autoPlay width={400} height={400} ref={localVideoRef} />
+      <video muted autoPlay width={400} height={400} ref={localVideoRef} />
       {lobby ? "Waiting for someone to connect" : null}
-      <video autoPlay width={400} height={400} ref={remoteVideoRef} />
+      <video muted autoPlay width={400} height={400} ref={remoteVideoRef} />
+      <button onClick={() => localVideoRef.current.play()}>wow</button>
     </div>
   )
 } 
