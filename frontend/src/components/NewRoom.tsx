@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Socket, io } from "socket.io-client";
+import { io } from "socket.io-client";
 
-const URL = 'http://localhost:3000';
+const URL = 'https://omegle-clone-68e8.onrender.com';
+// const URL = 'http://localhost:3000';
 
 const servers = {
   iceServers: [
@@ -15,18 +16,13 @@ const servers = {
 };
 
 export const Room = ({
-  localAudioTrack,
-  localVideoTrack,
   localStream
 }: {
-  localAudioTrack: MediaStreamTrack | null,
-  localVideoTrack: MediaStreamTrack | null,
   localStream: MediaStream | null
 }) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  // const [socket, setSocket] = useState<Socket | null>(null);
   const [lobby, setLobby] = useState(true);
-  const [roomId, setRoomId] = useState<string>("");
-  const [pc, setPC] = useState<RTCPeerConnection | null>(null);
+  // const [roomId, setRoomId] = useState<string>("");
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const [refresh, setRefresh] = useState(false);
@@ -46,21 +42,20 @@ export const Room = ({
       }
     };
 
-    setPC(newPc);
     return newPc;
   }, [localStream, refresh]);
 
-  const nextUser = () => {
-    if (socket) {
-      socket.emit('next-user', { roomId });
-      console.log('NEXT USER');
-      setLobby(true);
-    }
-  }
+  // const nextUser = () => {
+  //   if (socket) {
+  //     socket.emit('next-user', { roomId });
+  //     console.log('NEXT USER');
+  //     setLobby(true);
+  //   }
+  // }
 
   useEffect(() => {
     const socket = io(URL, { autoConnect: true });
-    setSocket(socket);
+    // setSocket(socket);
 
     const peerConnection = initializePeerConnection();
 
@@ -70,7 +65,7 @@ export const Room = ({
 
     socket.on('send-offer', async ({ roomId }) => {
       setLobby(false);
-      setRoomId(roomId);
+      // setRoomId(roomId);
       peerConnection.onicecandidate = async (event) => {
         if (event.candidate) {
           console.log("ICE CANDIDATE: ", event.candidate);
@@ -88,7 +83,7 @@ export const Room = ({
 
     socket.on('offer', async ({ sdp, roomId }) => {
       setLobby(false);
-      setRoomId(roomId);
+      // setRoomId(roomId);
       peerConnection.onicecandidate = async (event) => {
         if (event.candidate) {
           console.log('Adding answer candidate...:', event.candidate);
@@ -153,7 +148,7 @@ export const Room = ({
           onClick={() => { setRefresh(!refresh); setLobby(true) }}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
         >
-          Play Remote Video
+          Next Person
         </button>
       </div>
     </div>

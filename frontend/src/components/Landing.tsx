@@ -4,8 +4,8 @@ import { Room } from "./NewRoom";
 export const Landing = () => {
   const [joined, setJoined] = useState(false);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [localVideoTrack, setlocalVideoTrack] = useState<MediaStreamTrack | null>(null);
-  const [localAudioTrack, setLocalAudioTrack] = useState<MediaStreamTrack | null>(null);
+  // const [localVideoTrack, setlocalVideoTrack] = useState<MediaStreamTrack | null>(null);
+  // const [localAudioTrack, setLocalAudioTrack] = useState<MediaStreamTrack | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const getCam = async () => {
@@ -14,14 +14,15 @@ export const Landing = () => {
       audio: true
     })
     setLocalStream(stream);
-    const audioTrack = stream.getAudioTracks()[0];
-    const videoTrack = stream.getVideoTracks()[0];
-    setLocalAudioTrack(audioTrack);
-    setlocalVideoTrack(videoTrack);
+    // const audioTrack = stream.getAudioTracks()[0];
+    // const videoTrack = stream.getVideoTracks()[0];
+    // setLocalAudioTrack(audioTrack);
+    // setlocalVideoTrack(videoTrack);
     if (!videoRef.current) {
       return;
     }
-    videoRef.current.srcObject = new MediaStream([videoTrack]);
+    videoRef.current.srcObject = localStream;
+    // videoRef.current.srcObject = new MediaStream([videoTrack]);
     videoRef.current.play();
   }
 
@@ -54,6 +55,7 @@ export const Landing = () => {
           <video
             className="w-full h-full object-cover rounded-lg shadow-lg"
             autoPlay
+            muted
             ref={videoRef}
           ></video>
 
@@ -72,5 +74,5 @@ export const Landing = () => {
       </div>
     )
   }
-  return <Room localStream={localStream} localAudioTrack={localAudioTrack} localVideoTrack={localVideoTrack} />
+  return <Room localStream={localStream} />
 }
