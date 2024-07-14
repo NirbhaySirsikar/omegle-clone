@@ -1,5 +1,4 @@
 import { Socket } from "socket.io";
-import { UserManager } from "./UserManager";
 
 let GLOBAL_ROOM_ID = 1;
 
@@ -10,10 +9,8 @@ interface Room {
 
 export class RoomManager {
   private rooms: Map<string, Room>;
-  private userManager: UserManager;
   constructor() {
     this.rooms = new Map<string, Room>();
-    this.userManager = new UserManager();
   }
 
   createRoom(user1: Socket, user2: Socket) {
@@ -56,15 +53,6 @@ export class RoomManager {
     otherUser.emit("add-ice-candidate", ({ candidate }));
   }
 
-  onNextUser(roomId: string, socketId: string) {
-    const room = this.rooms.get(roomId);
-    if (!room) {
-      return;
-    }
-    this.rooms.delete(roomId);
-    this.userManager.addNextUser(room.user1, room.user2);
-    console.log("next user func done");
-  }
 
   generate() {
     return (GLOBAL_ROOM_ID++).toString();
