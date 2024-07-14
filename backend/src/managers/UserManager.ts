@@ -69,11 +69,11 @@ export class UserManager {
       this.roomManager.onIceCandidates(roomId, socket.id, candidate);
     })
 
-    socket.on("next-user", ({ roomId }) => {
-      console.log('next user');
-      this.roomManager.onNextUser(socket.id, roomId);
-      console.log("next-user");
-
-    })
+    // socket.on("next-user", ({ roomId }) => {
+    //   console.log('next user');
+    //   this.roomManager.onNextUser(socket.id, roomId);
+    //   console.log("next-user");
+    //
+    // })
   }
 }
