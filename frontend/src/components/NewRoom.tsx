@@ -120,22 +120,24 @@ export const Room = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="relative">
           <video
-            muted
-            autoPlay
-            playsInline
-            ref={localVideoRef}
-            className="w-full h-auto rounded-lg shadow-lg"
-          />
-          <p className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">You</p>
-        </div>
-        <div className="relative">
-          <video
             autoPlay
             playsInline
             ref={remoteVideoRef}
             className="w-full h-auto rounded-lg shadow-lg"
           />
           <p className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">Remote</p>
+        </div>
+        <div className="max-sm:absolute max-sm:">
+          <div className="relative  max-sm:w-[25%] ">
+            <video
+              muted
+              autoPlay
+              playsInline
+              ref={localVideoRef}
+              className="w-full h-auto rounded-lg shadow-lg"
+            />
+            <p className="max-sm:hidden absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">You</p>
+          </div>
         </div>
       </div>
       {lobby && (
