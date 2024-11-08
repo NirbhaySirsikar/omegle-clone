@@ -25,8 +25,8 @@ server.listen(3000, () => {
   console.log('listening on :3000');
 });
 
-const url = `https://omegle-clone-68e8.onrender.com/`; // Replace with your Render URL
-const interval = 30000; // Interval in milliseconds (30 seconds)
+const url = `https://omegle-clone-68e8.onrender.com/`;
+const interval = 300000;
 
 function reloadWebsite() {
   fetch(url, { method: 'GET' })
